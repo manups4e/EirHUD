@@ -9,7 +9,7 @@ nav_order: 4
 # EirHUD API
 
 The **EirHUD API** provides developers with full control over **every single component** of the interface.
-Nothing is hidden: if it's on the screen, you can control it via code, if it's hidden you can toggle it. The API structure mirrors the configuration structure, making it intuitive to find the module you need.
+Nothing is hidden: if it's on the screen, you can control it via code; if it's hidden, you can toggle it. The API structure mirrors the configuration structure, making it intuitive to find the module you need.
 
 The system is designed to be:
 - **Zero-Latency:** Direct communication with the Scaleform engine.
@@ -94,10 +94,59 @@ classDiagram
     style EirHUD_Export fill:#0f0,stroke:#333,stroke-width:2px,color:#000
 ```
 
+---
+
+## 🎨 Dynamic Asset Loading
+
+EirHUD exposes a powerful runtime texture dictionary named **`aesir_eir`**.
+This feature allows you to use custom `.png` images (local) or **GIFs/Images from URLs** (remote) without needing to manually compile and stream `.ytd` files.
+
+
+
+### Configuration
+In your `fxmanifest.lua`, look for the `file_set 'textures'` block.
+You can add your custom assets here.
+
+> **⚠️ Important:** Globbing (e.g., `textures/*.png`) is **not** supported. You must list files individually.
+
+```lua
+file_set 'textures' {
+  -- 1. Local PNG Files
+  -- Place these in the "textures/" folder of the script.
+  -- The API Name will be the filename without extension.
+  'textures/armor.png',           -- API Name: "armor"
+  'textures/water_bottle.png',    -- API Name: "water_bottle"
+  'textures/inventory_bag.png',   -- API Name: "inventory_bag"
+
+  -- 2. Remote URLs (DUI)
+  -- These are loaded as web textures.
+  -- The API Name is generated incrementally: "dui_1", "dui_2", etc.
+  'https://media.giphy.com/media/example/giphy.gif' -- API Name: "dui_1"
+}
+```
+
+### Usage in Code
+When using API methods that require a texture (like `ReservedSlots`, `EquippedWeapon`, or `ServerLogo`), use:
+* **TXD:** `"aesir_eir"`
+* **TXN:** The filename (e.g., `"armor"`) or the DUI index (e.g., `"dui_1"`).
+
+```lua
+-- Example: Displaying a local custom icon in the Hotbar
+exports['eir_hud']:GetReservedSlotsAPI().UpdateSlot(1, {
+    txd = "aesir_eir",
+    txn = "water_bottle", -- Matches 'textures/water_bottle.png'
+    amount = 1
+})
+```
+
+---
+
 ## Quick Example
 
-There are 2 ways to use the HUD, you can:
-- retrieve the whole API object and target the specific modules by name.
+There are 2 ways to use the HUD.
+
+### Method 1: The Global Object
+Retrieve the whole API object and target specific modules by name.
 
 ```lua
 -- 1. Get the Main API Object
@@ -108,6 +157,7 @@ EirAPI.ProgressBar.Start(5000, "Repairing Vehicle...", SColor.FromRandomValues()
 
 -- 3. Example: Force an Icon in the Hotbar (ReservedSlots)
 EirAPI.ReservedSlots.UpdateSlot(1, {
+    txd = "aesir_eir", -- Using the dynamic runtime dictionary
     txn = "bandage",
     amount = 5,
     enabled = true
@@ -117,7 +167,8 @@ EirAPI.ReservedSlots.UpdateSlot(1, {
 EirAPI.ServerInfo.UpdateLabel(1, "Job: Police - Chief")
 ```
 
-- Retrieve the single components via their own Get exports
+### Method 2: Direct Component Exports
+Retrieve single components via their specific exports.
 
 ```lua
 local compass = exports['eir_hud']:GetCompassAPI()
