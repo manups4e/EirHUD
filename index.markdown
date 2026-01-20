@@ -30,4 +30,4 @@ Unlike standard HTML/NUI interfaces, EirHUD renders **crisp, vector-based graphi
 
 - [Getting Started](./getting-started.md) - Learn how to install the resource, load order, and framework requirements.
 - [Configuration](./configuration.md) - Deep dive into `Config.lua`, enabling components and Performance Mode.
-- [API & Components](./appi/index.md) - For Developers: learn how to use the **Override System** to control the HUD from your own scripts with a detailed breakdown of the components such as: Compass, Dashboard, and Status.
+- [API & Components](./api/index.md) - For Developers: learn how to use the **Override System** to control the HUD from your own scripts with a detailed breakdown of the components such as: Compass, Dashboard, and Status.
