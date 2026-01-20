@@ -107,6 +107,7 @@ This feature allows you to use custom `.png` images (local) or **GIFs/Images fro
 In your `fxmanifest.lua`, look for the `file_set 'textures'` block.
 You can add your custom assets here.
 
+{: .warning}
 > **⚠️ Important:** Globbing (e.g., `textures/*.png`) is **not** supported. You must list files individually.
 
 ```lua
